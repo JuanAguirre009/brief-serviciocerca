@@ -1,0 +1,13 @@
+# Force Git to treat common project files as text.
+*.py text
+*.txt text
+*.md text
+*.yml text
+*.yaml text
+*.json text
+*.env text
+*.env.example text
+
+# Explicitly mark requirements.txt as text (it was previously stored with
+# UTF-16 encoding and detected as binary).
+brief-serviciocerca-backend/requirements.txt text
