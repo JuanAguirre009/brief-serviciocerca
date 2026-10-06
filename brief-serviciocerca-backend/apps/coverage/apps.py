@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class AppTemplateConfig(AppConfig):
+class CoverageConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "apps._app_template"
+    name = "apps.coverage"
+    verbose_name = "Coverage"
