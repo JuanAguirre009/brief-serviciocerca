@@ -238,7 +238,7 @@ class TechnicianAPITests(APITestCase):
 
                 "code": "TEC-001",
 
-                "name": "Carlos Pérez",
+                "name": "Carlos Pï¿½rez",
 
                 "base_id": self.base.id,
 
@@ -276,7 +276,7 @@ class TechnicianAPITests(APITestCase):
 
                 "code": "TEC-001",
 
-                "name": "Carlos Pérez",
+                "name": "Carlos Pï¿½rez",
 
                 "base_id": self.zone.id,
 
@@ -306,7 +306,7 @@ class TechnicianAPITests(APITestCase):
 
                 "code": "TEC-001",
 
-                "name": "Carlos Pérez",
+                "name": "Carlos Perez",
 
                 "base_id": 99999,
 
@@ -482,7 +482,7 @@ class CoverageNetworkAPITests(APITestCase):
 
             code="TEC-001",
 
-            name="Carlos Pérez",
+            name="Carlos Pï¿½rez",
 
             base_id=self.base.id,
 

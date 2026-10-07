@@ -56,7 +56,8 @@ class ConnectionSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
-        class CoverageNodeCreateSerializer(serializers.Serializer):
+
+class CoverageNodeCreateSerializer(serializers.Serializer):
     code = serializers.CharField(
         max_length=50,
     )
