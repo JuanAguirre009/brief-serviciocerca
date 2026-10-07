@@ -1,3 +1,4 @@
+import { useRuntimeConfig } from '#app'
 import type {
   Connection,
   ConnectionCreatePayload,

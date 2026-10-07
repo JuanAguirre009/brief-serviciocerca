@@ -4,6 +4,7 @@ import type {
   CoverageNode,
 } from '~/types/coverage'
 
+import { useCoverageApi } from '~/composables/useCoverageApi'
 
 const props = defineProps<{
   nodes: CoverageNode[]

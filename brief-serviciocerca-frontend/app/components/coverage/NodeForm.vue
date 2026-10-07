@@ -4,6 +4,8 @@ import type {
   NodeType,
 } from '~/types/coverage'
 
+import { useCoverageApi } from '~/composables/useCoverageApi'
+
 
 const emit = defineEmits<{
   created: []

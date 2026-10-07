@@ -3,6 +3,8 @@ import type {
   CoverageNetwork,
 } from '~/types/coverage'
 
+import { useCoverageApi } from '~/composables/useCoverageApi'
+
 
 const coverageApi = useCoverageApi()
 
@@ -23,8 +25,7 @@ async function loadNetwork() {
   errorMessage.value = ''
 
   try {
-    network.value =
-      await coverageApi.getNetwork()
+    network.value = await coverageApi.getNetwork()
   }
   catch {
     errorMessage.value =
@@ -40,6 +41,7 @@ onMounted(() => {
   loadNetwork()
 })
 </script>
+
 
 
 <template>

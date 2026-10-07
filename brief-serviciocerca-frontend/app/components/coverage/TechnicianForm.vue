@@ -4,6 +4,8 @@ import type {
   TechnicianCreatePayload,
 } from '~/types/coverage'
 
+import { useCoverageApi } from '~/composables/useCoverageApi'
+
 
 const props = defineProps<{
   nodes: CoverageNode[]
