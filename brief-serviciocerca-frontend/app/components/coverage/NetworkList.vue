@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type {
-  CoverageNetwork,
-} from '~/types/coverage'
+import type { CoverageNetwork } from '~/types/coverage'
 
 
 defineProps<{
@@ -23,15 +21,21 @@ defineProps<{
     </div>
 
     <div class="network-grid">
-      <div>
+      <div class="network-column">
         <h3>Nodos</h3>
 
-        <p
+        <div
           v-if="!network.nodes.length"
-          class="empty"
+          class="empty-state"
         >
-          No hay nodos registrados.
-        </p>
+          <p class="empty">
+            No hay nodos registrados.
+          </p>
+
+          <p class="hint">
+            Usa el formulario de la izquierda para registrar bases y zonas.
+          </p>
+        </div>
 
         <ul v-else>
           <li
@@ -42,23 +46,32 @@ defineProps<{
 
             — {{ node.name }}
 
-            <span class="tag">
-              {{ node.type }}
+            <span
+              class="tag"
+              :class="node.type.toLowerCase()"
+            >
+              {{ node.type === 'BASE' ? 'Base' : 'Zona' }}
             </span>
           </li>
         </ul>
       </div>
 
 
-      <div>
+      <div class="network-column">
         <h3>Técnicos</h3>
 
-        <p
+        <div
           v-if="!network.technicians.length"
-          class="empty"
+          class="empty-state"
         >
-          No hay técnicos registrados.
-        </p>
+          <p class="empty">
+            No hay técnicos registrados.
+          </p>
+
+          <p class="hint">
+            Registra técnicos asociados a una base.
+          </p>
+        </div>
 
         <ul v-else>
           <li
@@ -78,6 +91,7 @@ defineProps<{
 
             <span
               class="tag"
+              :class="technician.is_available ? 'available' : 'unavailable'"
             >
               {{
                 technician.is_available
@@ -90,15 +104,21 @@ defineProps<{
       </div>
 
 
-      <div>
+      <div class="network-column">
         <h3>Conexiones</h3>
 
-        <p
+        <div
           v-if="!network.connections.length"
-          class="empty"
+          class="empty-state"
         >
-          No hay conexiones registradas.
-        </p>
+          <p class="empty">
+            No hay conexiones registradas.
+          </p>
+
+          <p class="hint">
+            Conecta nodos para definir rutas operativas.
+          </p>
+        </div>
 
         <ul v-else>
           <li
@@ -128,3 +148,36 @@ defineProps<{
     </div>
   </section>
 </template>
+
+
+<style scoped>
+.network-column {
+  min-width: 0;
+}
+
+.empty-state {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.tag.base {
+  background: #111827;
+  color: white;
+}
+
+.tag.zone {
+  background: #3b82f6;
+  color: white;
+}
+
+.tag.available {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tag.unavailable {
+  background: #fee2e2;
+  color: #991b1b;
+}
+</style>
