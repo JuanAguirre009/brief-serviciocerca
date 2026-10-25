@@ -96,8 +96,7 @@ select {
 
 .form input:focus,
 .form select:focus {
-  outline: 2px solid #9ca3af;
-  outline-offset: 1px;
+  border-color: #3b82f6;
 }
 
 .checkbox {
@@ -115,6 +114,16 @@ button {
   border-radius: 8px;
   padding: 10px 16px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 button:disabled {
@@ -122,9 +131,21 @@ button:disabled {
   opacity: 0.6;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
 .secondary {
   background: white;
   border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.secondary:hover:not(:disabled) {
+  background: #f9fafb;
 }
 
 .form button {
@@ -132,17 +153,39 @@ button:disabled {
   color: white;
 }
 
+.form button:hover:not(:disabled) {
+  background: #374151;
+}
+
+.success,
+.error,
+.hint {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
 .success {
   margin-bottom: 0;
+  color: #065f46;
+  background: #d1fae5;
 }
 
 .error {
   margin-bottom: 0;
+  color: #991b1b;
+  background: #fee2e2;
 }
 
 .hint,
 .empty {
-  color: #6b7280;
+  color: #4b5563;
+  background: #f3f4f6;
+}
+
+.empty {
+  padding: 16px;
+  text-align: center;
 }
 
 .alert {

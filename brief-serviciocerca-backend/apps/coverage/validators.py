@@ -24,13 +24,13 @@ def validate_identifier(value: str) -> None:
 
     if not value:
         raise ValidationError(
-            "Identifier cannot be empty."
+            "El identificador no puede estar vacío."
         )
 
     if not IDENTIFIER_PATTERN.fullmatch(value):
         raise ValidationError(
-            "Identifier may only contain uppercase letters, "
-            "numbers, hyphens, and underscores."
+            "El identificador solo puede contener letras mayúsculas, "
+            "números, guiones y guiones bajos."
         )
 
 
@@ -41,5 +41,5 @@ def validate_positive_weight(value) -> None:
 
     if value is None or value <= 0:
         raise ValidationError(
-            "Connection weight must be greater than zero."
+            "El peso de la conexión debe ser mayor a cero."
         )

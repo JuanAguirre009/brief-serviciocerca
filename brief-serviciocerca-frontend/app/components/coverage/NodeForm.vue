@@ -1,60 +1,41 @@
 <script setup lang="ts">
-import type {
-  NodeCreatePayload,
-  NodeType,
-} from '~/types/coverage'
+import type { CoverageNode, NodeCreatePayload } from '~/types/coverage'
 
 import { useCoverageApi } from '~/composables/useCoverageApi'
+import { useFormSubmit } from '~/composables/useFormSubmit'
 
 
 const emit = defineEmits<{
-  created: []
+  created: [node: CoverageNode]
 }>()
 
 
 const coverageApi = useCoverageApi()
 
 
-const form = reactive<NodeCreatePayload>({
-  code: '',
-  name: '',
-  type: 'BASE',
+function createEmptyForm(): NodeCreatePayload {
+  return {
+    code: '',
+    name: '',
+    type: 'BASE',
+  }
+}
+
+
+const form = reactive<NodeCreatePayload>(createEmptyForm())
+
+
+const { loading, errorMessage, successMessage, submit } = useFormSubmit<NodeCreatePayload, CoverageNode>({
+  onSubmit: payload => coverageApi.createNode(payload),
+  successMessage: 'Nodo registrado correctamente.',
+  reset: () => Object.assign(form, createEmptyForm()),
 })
 
 
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
-
-
-async function submit() {
-  loading.value = true
-  errorMessage.value = ''
-  successMessage.value = ''
-
-  try {
-    await coverageApi.createNode({
-      code: form.code,
-      name: form.name,
-      type: form.type,
-    })
-
-    successMessage.value = 'Nodo registrado correctamente.'
-
-    form.code = ''
-    form.name = ''
-    form.type = 'BASE'
-
-    emit('created')
-  }
-  catch (error: any) {
-    errorMessage.value =
-      error?.data
-        ? JSON.stringify(error.data)
-        : 'No fue posible registrar el nodo.'
-  }
-  finally {
-    loading.value = false
+async function handleSubmit() {
+  const node = await submit(form)
+  if (node) {
+    emit('created', node)
   }
 }
 </script>
@@ -66,7 +47,7 @@ async function submit() {
 
     <form
       class="form"
-      @submit.prevent="submit"
+      @submit.prevent="handleSubmit"
     >
       <label>
         Código
@@ -74,6 +55,7 @@ async function submit() {
         <input
           v-model="form.code"
           required
+          maxlength="50"
           placeholder="BASE-NORTE"
         >
       </label>
@@ -84,6 +66,7 @@ async function submit() {
         <input
           v-model="form.name"
           required
+          maxlength="150"
           placeholder="Base Norte"
         >
       </label>

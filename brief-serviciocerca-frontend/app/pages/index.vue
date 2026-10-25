@@ -1,45 +1,8 @@
 <script setup lang="ts">
-import type {
-  CoverageNetwork,
-} from '~/types/coverage'
-
-import { useCoverageApi } from '~/composables/useCoverageApi'
+import { useNetwork } from '~/composables/useNetwork'
 
 
-const coverageApi = useCoverageApi()
-
-
-const network = ref<CoverageNetwork>({
-  nodes: [],
-  technicians: [],
-  connections: [],
-})
-
-
-const loading = ref(true)
-const errorMessage = ref('')
-
-
-async function loadNetwork() {
-  loading.value = true
-  errorMessage.value = ''
-
-  try {
-    network.value = await coverageApi.getNetwork()
-  }
-  catch {
-    errorMessage.value =
-      'No fue posible consultar la red de cobertura.'
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-
-onMounted(() => {
-  loadNetwork()
-})
+const { network, loading, errorMessage, refresh } = useNetwork()
 </script>
 
 
@@ -63,7 +26,7 @@ onMounted(() => {
       <button
         class="secondary"
         :disabled="loading"
-        @click="loadNetwork"
+        @click="refresh"
       >
         Actualizar red
       </button>
@@ -79,18 +42,16 @@ onMounted(() => {
 
 
     <section class="forms-grid">
-      <CoverageNodeForm
-        @created="loadNetwork"
-      />
+      <CoverageNodeForm @created="refresh" />
 
       <CoverageTechnicianForm
         :nodes="network.nodes"
-        @created="loadNetwork"
+        @created="refresh"
       />
 
       <CoverageConnectionForm
         :nodes="network.nodes"
-        @created="loadNetwork"
+        @created="refresh"
       />
     </section>
 

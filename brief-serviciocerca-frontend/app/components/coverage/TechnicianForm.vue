@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type {
-  CoverageNode,
-  TechnicianCreatePayload,
-} from '~/types/coverage'
+import type { CoverageNode, Technician, TechnicianCreatePayload } from '~/types/coverage'
 
 import { useCoverageApi } from '~/composables/useCoverageApi'
+import { useFormSubmit } from '~/composables/useFormSubmit'
 
 
 const props = defineProps<{
@@ -13,24 +11,11 @@ const props = defineProps<{
 
 
 const emit = defineEmits<{
-  created: []
+  created: [technician: Technician]
 }>()
 
 
 const coverageApi = useCoverageApi()
-
-
-const form = reactive<TechnicianCreatePayload>({
-  code: '',
-  name: '',
-  base_id: 0,
-  is_available: true,
-})
-
-
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
 
 
 const bases = computed(() => {
@@ -40,34 +25,44 @@ const bases = computed(() => {
 })
 
 
-async function submit() {
-  loading.value = true
-  errorMessage.value = ''
-  successMessage.value = ''
-
-  try {
-    await coverageApi.createTechnician({
-      ...form,
-    })
-
-    successMessage.value =
-      'Técnico registrado correctamente.'
-
-    form.code = ''
-    form.name = ''
-    form.base_id = 0
-    form.is_available = true
-
-    emit('created')
+function createEmptyForm(): TechnicianCreatePayload {
+  return {
+    code: '',
+    name: '',
+    base_id: null,
+    is_available: true,
   }
-  catch (error: any) {
-    errorMessage.value =
-      error?.data
-        ? JSON.stringify(error.data)
-        : 'No fue posible registrar el técnico.'
+}
+
+
+const form = reactive<TechnicianCreatePayload>(createEmptyForm())
+
+
+const { loading, errorMessage, successMessage, submit } = useFormSubmit<TechnicianCreatePayload, Technician>({
+  onSubmit: payload => coverageApi.createTechnician({
+    ...payload,
+    base_id: payload.base_id!,
+  }),
+  successMessage: 'Técnico registrado correctamente.',
+  reset: () => Object.assign(form, createEmptyForm()),
+})
+
+
+const canSubmit = computed(() => {
+  return form.base_id !== null
+    && form.code.trim() !== ''
+    && form.name.trim() !== ''
+})
+
+
+async function handleSubmit() {
+  if (form.base_id === null) {
+    return
   }
-  finally {
-    loading.value = false
+
+  const technician = await submit(form)
+  if (technician) {
+    emit('created', technician)
   }
 }
 </script>
@@ -79,7 +74,7 @@ async function submit() {
 
     <form
       class="form"
-      @submit.prevent="submit"
+      @submit.prevent="handleSubmit"
     >
       <label>
         Código
@@ -87,6 +82,7 @@ async function submit() {
         <input
           v-model="form.code"
           required
+          maxlength="50"
           placeholder="TEC-001"
         >
       </label>
@@ -97,6 +93,7 @@ async function submit() {
         <input
           v-model="form.name"
           required
+          maxlength="150"
           placeholder="Carlos Pérez"
         >
       </label>
@@ -110,7 +107,7 @@ async function submit() {
         >
           <option
             disabled
-            :value="0"
+            :value="null"
           >
             Selecciona una base
           </option>
@@ -136,7 +133,7 @@ async function submit() {
 
       <button
         type="submit"
-        :disabled="loading || !bases.length"
+        :disabled="loading || !canSubmit"
       >
         {{ loading ? 'Guardando...' : 'Registrar técnico' }}
       </button>

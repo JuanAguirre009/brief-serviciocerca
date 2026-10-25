@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type {
-  ConnectionCreatePayload,
-  CoverageNode,
-} from '~/types/coverage'
+import type { Connection, ConnectionCreatePayload, CoverageNode } from '~/types/coverage'
 
 import { useCoverageApi } from '~/composables/useCoverageApi'
+import { useFormSubmit } from '~/composables/useFormSubmit'
+
 
 const props = defineProps<{
   nodes: CoverageNode[]
@@ -12,54 +11,66 @@ const props = defineProps<{
 
 
 const emit = defineEmits<{
-  created: []
+  created: [connection: Connection]
 }>()
 
 
 const coverageApi = useCoverageApi()
 
 
-const form = reactive<ConnectionCreatePayload>({
-  origin_id: 0,
-  destination_id: 0,
-  estimated_minutes: 1,
-  is_bidirectional: false,
+function createEmptyForm(): ConnectionCreatePayload {
+  return {
+    origin_id: null,
+    destination_id: null,
+    estimated_minutes: 1,
+    is_bidirectional: false,
+  }
+}
+
+
+const form = reactive<ConnectionCreatePayload>(createEmptyForm())
+
+
+const { loading, errorMessage, successMessage, submit } = useFormSubmit<ConnectionCreatePayload, Connection>({
+  onSubmit: payload => coverageApi.createConnection({
+    ...payload,
+    origin_id: payload.origin_id!,
+    destination_id: payload.destination_id!,
+  }),
+  successMessage: 'Conexión registrada correctamente.',
+  reset: () => Object.assign(form, createEmptyForm()),
 })
 
 
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
-
-
-async function submit() {
-  loading.value = true
-  errorMessage.value = ''
-  successMessage.value = ''
-
-  try {
-    await coverageApi.createConnection({
-      ...form,
-    })
-
-    successMessage.value =
-      'Conexión registrada correctamente.'
-
-    form.origin_id = 0
-    form.destination_id = 0
-    form.estimated_minutes = 1
-    form.is_bidirectional = false
-
-    emit('created')
+const validationError = computed(() => {
+  if (form.origin_id === null || form.destination_id === null) {
+    return ''
   }
-  catch (error: any) {
-    errorMessage.value =
-      error?.data
-        ? JSON.stringify(error.data)
-        : 'No fue posible registrar la conexión.'
+
+  if (form.origin_id === form.destination_id) {
+    return 'El origen y el destino deben ser diferentes.'
   }
-  finally {
-    loading.value = false
+
+  return ''
+})
+
+
+const canSubmit = computed(() => {
+  return form.origin_id !== null
+    && form.destination_id !== null
+    && form.origin_id !== form.destination_id
+    && form.estimated_minutes > 0
+})
+
+
+async function handleSubmit() {
+  if (!canSubmit.value) {
+    return
+  }
+
+  const connection = await submit(form)
+  if (connection) {
+    emit('created', connection)
   }
 }
 </script>
@@ -71,7 +82,7 @@ async function submit() {
 
     <form
       class="form"
-      @submit.prevent="submit"
+      @submit.prevent="handleSubmit"
     >
       <label>
         Origen
@@ -82,7 +93,7 @@ async function submit() {
         >
           <option
             disabled
-            :value="0"
+            :value="null"
           >
             Selecciona un nodo
           </option>
@@ -106,7 +117,7 @@ async function submit() {
         >
           <option
             disabled
-            :value="0"
+            :value="null"
           >
             Selecciona un nodo
           </option>
@@ -141,9 +152,16 @@ async function submit() {
         Puede recorrerse en ambos sentidos
       </label>
 
+      <p
+        v-if="validationError"
+        class="error"
+      >
+        {{ validationError }}
+      </p>
+
       <button
         type="submit"
-        :disabled="loading || nodes.length < 2"
+        :disabled="loading || !canSubmit"
       >
         {{ loading ? 'Guardando...' : 'Registrar conexión' }}
       </button>

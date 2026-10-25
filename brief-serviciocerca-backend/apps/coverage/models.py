@@ -19,7 +19,7 @@ class CoverageNode(models.Model):
 
     class NodeType(models.TextChoices):
         BASE = "BASE", "Base"
-        ZONE = "ZONE", "Zone"
+        ZONE = "ZONE", "Zona"
 
     code = models.CharField(
         max_length=50,
@@ -46,8 +46,8 @@ class CoverageNode(models.Model):
 
     class Meta:
         ordering = ["code"]
-        verbose_name = "Coverage node"
-        verbose_name_plural = "Coverage nodes"
+        verbose_name = "nodo de cobertura"
+        verbose_name_plural = "nodos de cobertura"
 
     def __str__(self):
         return f"{self.code} - {self.name}"
@@ -92,6 +92,8 @@ class Technician(models.Model):
 
     class Meta:
         ordering = ["code"]
+        verbose_name = "técnico"
+        verbose_name_plural = "técnicos"
 
     def clean(self):
         super().clean()
@@ -103,8 +105,7 @@ class Technician(models.Model):
             raise ValidationError(
                 {
                     "base": (
-                        "A technician can only be assigned "
-                        "to a BASE node."
+                        "Un técnico solo puede asignarse a un nodo de tipo BASE."
                     )
                 }
             )
@@ -129,20 +130,24 @@ class Connection(models.Model):
         CoverageNode,
         on_delete=models.CASCADE,
         related_name="outgoing_connections",
+        verbose_name="origen",
     )
 
     destination = models.ForeignKey(
         CoverageNode,
         on_delete=models.CASCADE,
         related_name="incoming_connections",
+        verbose_name="destino",
     )
 
     estimated_minutes = models.PositiveIntegerField(
         validators=[validate_positive_weight],
+        verbose_name="minutos estimados",
     )
 
     is_bidirectional = models.BooleanField(
         default=False,
+        verbose_name="es bidireccional",
     )
 
     created_at = models.DateTimeField(
@@ -158,15 +163,23 @@ class Connection(models.Model):
             "origin__code",
             "destination__code",
         ]
+        verbose_name = "conexión"
+        verbose_name_plural = "conexiones"
 
         constraints = [
             models.CheckConstraint(
                 condition=~Q(origin=F("destination")),
                 name="coverage_connection_different_nodes",
+                violation_error_message=(
+                    "El origen y el destino deben ser diferentes."
+                ),
             ),
             models.CheckConstraint(
                 condition=Q(estimated_minutes__gt=0),
                 name="coverage_connection_positive_weight",
+                violation_error_message=(
+                    "Los minutos estimados deben ser mayores a cero."
+                ),
             ),
             models.UniqueConstraint(
                 fields=[
@@ -174,6 +187,9 @@ class Connection(models.Model):
                     "destination",
                 ],
                 name="coverage_connection_unique_direction",
+                violation_error_message=(
+                    "Ya existe una conexión en esa dirección."
+                ),
             ),
         ]
 
@@ -188,7 +204,7 @@ class Connection(models.Model):
             raise ValidationError(
                 {
                     "destination": (
-                        "Origin and destination must be different."
+                        "El origen y el destino deben ser diferentes."
                     )
                 }
             )
@@ -200,7 +216,7 @@ class Connection(models.Model):
             raise ValidationError(
                 {
                     "estimated_minutes": (
-                        "Estimated minutes must be greater than zero."
+                        "Los minutos estimados deben ser mayores a cero."
                     )
                 }
             )
@@ -228,9 +244,8 @@ class Connection(models.Model):
             raise ValidationError(
                 {
                     "destination": (
-                        "A reverse connection already exists. "
-                        "A bidirectional connection already "
-                        "represents both directions."
+                        "Ya existe una conexión en sentido inverso. "
+                        "Una conexión bidireccional ya representa ambas direcciones."
                     )
                 }
             )
@@ -243,9 +258,8 @@ class Connection(models.Model):
             raise ValidationError(
                 {
                     "destination": (
-                        "The reverse connection is already "
-                        "bidirectional and therefore already "
-                        "represents this direction."
+                        "La conexión inversa ya es bidireccional, "
+                        "por lo que ya representa esta dirección."
                     )
                 }
             )

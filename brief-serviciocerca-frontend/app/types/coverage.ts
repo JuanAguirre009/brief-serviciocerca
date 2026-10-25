@@ -5,8 +5,8 @@ export interface CoverageNode {
   code: string
   name: string
   type: NodeType
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
 }
 
 export interface Technician {
@@ -15,8 +15,8 @@ export interface Technician {
   name: string
   base: CoverageNode
   is_available: boolean
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
 }
 
 export interface Connection {
@@ -25,8 +25,8 @@ export interface Connection {
   destination: CoverageNode
   estimated_minutes: number
   is_bidirectional: boolean
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
 }
 
 export interface CoverageNetwork {
@@ -44,13 +44,13 @@ export interface NodeCreatePayload {
 export interface TechnicianCreatePayload {
   code: string
   name: string
-  base_id: number
+  base_id: number | null
   is_available: boolean
 }
 
 export interface ConnectionCreatePayload {
-  origin_id: number
-  destination_id: number
+  origin_id: number | null
+  destination_id: number | null
   estimated_minutes: number
   is_bidirectional: boolean
 }

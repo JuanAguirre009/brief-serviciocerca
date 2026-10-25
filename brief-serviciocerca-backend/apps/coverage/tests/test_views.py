@@ -200,6 +200,60 @@ class CoverageNodeAPITests(APITestCase):
             2,
 
         )
+
+    def test_list_nodes_filtered_by_type(self):
+
+        node_create(
+
+            code="BASE-NORTE",
+
+            name="Base Norte",
+
+            node_type="BASE",
+
+        )
+ 
+        node_create(
+
+            code="ZONA-001",
+
+            name="Laureles",
+
+            node_type="ZONE",
+
+        )
+ 
+        response = self.client.get(
+
+            self.url,
+
+            {"node_type": "BASE"},
+
+        )
+ 
+        self.assertEqual(
+
+            response.status_code,
+
+            status.HTTP_200_OK,
+
+        )
+ 
+        self.assertEqual(
+
+            len(response.data),
+
+            1,
+
+        )
+ 
+        self.assertEqual(
+
+            response.data[0]["code"],
+
+            "BASE-NORTE",
+
+        )
  
  
 class TechnicianAPITests(APITestCase):
@@ -323,6 +377,80 @@ class TechnicianAPITests(APITestCase):
             response.status_code,
 
             status.HTTP_400_BAD_REQUEST,
+
+        )
+
+    def test_list_technicians_filtered_by_base(self):
+
+        technician_create(
+
+            code="TEC-001",
+
+            name="Carlos Pérez",
+
+            base_id=self.base.id,
+
+        )
+
+        response = self.client.get(
+
+            self.url,
+
+            {"base_id": self.base.id},
+
+        )
+
+        self.assertEqual(
+
+            response.status_code,
+
+            status.HTTP_200_OK,
+
+        )
+
+        self.assertEqual(
+
+            len(response.data),
+
+            1,
+
+        )
+
+    def test_list_technicians_filtered_by_availability(self):
+
+        technician_create(
+
+            code="TEC-001",
+
+            name="Carlos Pérez",
+
+            base_id=self.base.id,
+
+            is_available=False,
+
+        )
+
+        response = self.client.get(
+
+            self.url,
+
+            {"is_available": "false"},
+
+        )
+
+        self.assertEqual(
+
+            response.status_code,
+
+            status.HTTP_200_OK,
+
+        )
+
+        self.assertEqual(
+
+            len(response.data),
+
+            1,
 
         )
  
