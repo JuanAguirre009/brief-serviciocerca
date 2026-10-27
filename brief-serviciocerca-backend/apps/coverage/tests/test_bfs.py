@@ -20,7 +20,7 @@ class BfsReachabilityTests(TestCase):
 
         self.assertTrue(result["reachable"])
         self.assertEqual(result["path"], [1])
-        self.assertEqual(result["visited"], [1, 2, 3])
+        self.assertEqual(result["visited"], [1])
 
     def test_simple_path(self):
         adjacency = {
@@ -175,7 +175,7 @@ class BfsReachabilityTests(TestCase):
         self.assertEqual(result["visited"], [1, 2, 3, 4])
         self.assertEqual(result["path"], [])
 
-    def test_shortest_path_with_multiple_options(self):
+    def test_returns_valid_bfs_path_with_multiple_options(self):
         adjacency = {
             1: [2, 3],
             2: [4],
@@ -208,3 +208,23 @@ class BfsReachabilityTests(TestCase):
 
         self.assertFalse(result["reachable"])
         self.assertEqual(result["path"], [])
+
+    def test_visited_preserves_bfs_order(self):
+        adjacency = {
+            1: [5, 2],
+            5: [6],
+            2: [3],
+            6: [],
+            3: [],
+        }
+
+        result = bfs_reachability(
+            adjacency,
+            origin_id=1,
+            destination_id=None,
+        )
+
+        self.assertEqual(
+            result["visited"],
+            [1, 5, 2, 6, 3],
+        )

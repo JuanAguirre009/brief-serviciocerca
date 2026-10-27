@@ -16,18 +16,16 @@ from typing import Optional
 def _traverse_bfs(
     adjacency: dict[int, list[int]],
     origin_id: int,
-) -> tuple[set[int], dict[int, int]]:
-    """
-    Explore the graph from origin_id using BFS.
-
-    Returns:
-        - A set of visited node ids.
-        - A parent map: child_id -> parent_id.
-          The origin has no parent entry.
-    """
+    destination_id: Optional[int] = None,
+) -> tuple[list[int], dict[int, int]]:
     visited: set[int] = {origin_id}
+    visited_order: list[int] = [origin_id]
     parents: dict[int, int] = {}
+
     queue: deque[int] = deque([origin_id])
+
+    if destination_id == origin_id:
+        return visited_order, parents
 
     while queue:
         current = queue.popleft()
@@ -37,11 +35,15 @@ def _traverse_bfs(
                 continue
 
             visited.add(neighbor)
+            visited_order.append(neighbor)
             parents[neighbor] = current
+
+            if neighbor == destination_id:
+                return visited_order, parents
+
             queue.append(neighbor)
 
-    return visited, parents
-
+    return visited_order, parents
 
 def _reconstruct_path(
     parents: dict[int, int],
@@ -105,22 +107,22 @@ def bfs_reachability(
           reachable=False and path is empty. visited contains all nodes
           explored before giving up.
     """
-    visited, parents = _traverse_bfs(
+    visited_order, parents = _traverse_bfs(
         adjacency,
         origin_id,
+        destination_id,
     )
-
     if destination_id is None:
         return {
             "reachable": True,
-            "visited": sorted(visited),
+            "visited": visited_order,
             "path": [],
         }
 
     if destination_id == origin_id:
         return {
             "reachable": True,
-            "visited": sorted(visited),
+            "visited": visited_order,
             "path": [origin_id],
         }
 
@@ -132,6 +134,6 @@ def bfs_reachability(
 
     return {
         "reachable": len(path) > 0,
-        "visited": sorted(visited),
+        "visited": visited_order,
         "path": path,
     }
