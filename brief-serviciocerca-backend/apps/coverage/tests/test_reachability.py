@@ -286,3 +286,54 @@ class CoverageReachabilityTests(TestCase):
             "estimated_minutes",
             result,
         )
+
+    def test_check_coverage_respects_bidirectional_connection(self):
+        connection_create(
+            origin_id=self.zone_isolated.id,
+            destination_id=self.base_south.id,
+            estimated_minutes=10,
+            is_bidirectional=True,
+        )
+
+        result = check_coverage(
+            origin_id=self.base_south.id,
+            destination_id=self.zone_isolated.id,
+        )
+
+        self.assertTrue(
+            result["covered"]
+        )
+
+        self.assertEqual(
+            [
+                node["code"]
+                for node in result["path"]
+            ],
+            [
+                "BASE-SUR",
+                "ZONA-AISLADA",
+            ],
+        )
+        
+    def test_list_reachable_nodes_respects_incoming_direction(self):
+        result = list_reachable_nodes(
+            origin_id=self.base_south.id,
+        )
+
+        self.assertEqual(
+            result["reachable_count"],
+            0,
+        )
+
+        self.assertEqual(
+            result["reachable_nodes"],
+            [],
+        )
+    
+    def test_list_reachable_nodes_missing_origin(self):
+        with self.assertRaises(
+            NodeNotFoundError
+        ):
+            list_reachable_nodes(
+                origin_id=999999,
+            )
