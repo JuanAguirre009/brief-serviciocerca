@@ -8,14 +8,30 @@ import urllib.parse
 import urllib.request
 
 
+BACKEND_DIR = (
+    Path(__file__)
+    .resolve()
+    .parent
+    .parent
+)
+
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(
+        0,
+        str(BACKEND_DIR),
+    )
+
+
 os.environ.setdefault(
     "DJANGO_SETTINGS_MODULE",
     "config.settings",
 )
 
+
 import django
 
 django.setup()
+
 
 from apps.coverage.models import CoverageNode
 
@@ -722,15 +738,8 @@ def print_summary():
 
 
 if __name__ == "__main__":
-    backend_dir = (
-        Path(__file__)
-        .resolve()
-        .parent
-        .parent
-    )
-
     evidence_dir = (
-        backend_dir
+        BACKEND_DIR
         / "evidence"
         / "acceptance"
     )
@@ -775,14 +784,6 @@ if __name__ == "__main__":
             try:
                 main()
             except Exception as exc:
-                global_failed = (
-                    globals()["failed"]
-                )
-
-                globals()["failed"] = (
-                    global_failed + 1
-                )
-
                 print_result(
                     "ERROR NO CONTROLADO",
                     False,

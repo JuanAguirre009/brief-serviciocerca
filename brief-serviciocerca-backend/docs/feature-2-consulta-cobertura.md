@@ -88,11 +88,14 @@ CoverageReachabilityAPIView
    ↓
 reachability.py
    ↓
+PostgreSQL
+CoverageNode + Connection
+   ↓
 build_adjacency()
    ↓
 bfs_reachability()
    ↓
-PostgreSQL
+Resultado de cobertura
 ```
 
 Las responsabilidades están separadas:

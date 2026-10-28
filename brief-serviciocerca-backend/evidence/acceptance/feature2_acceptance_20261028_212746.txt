@@ -1,0 +1,59 @@
+Archivo de evidencia: /app/evidence/acceptance/feature2_acceptance_20261028_212746.txt
+
+========================================================================
+SERVICIOCERCA - ACEPTACION FEATURE 2
+========================================================================
+API: http://127.0.0.1:8000/api/coverage
+
+[PASS] SETUP-01 Crear base principal
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-02 Crear zona A
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-03 Crear zona B
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-04 Crear zona aislada
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-05 Crear base reversa
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-06 Crear zona reversa
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-07 Crear conexión base -> zona A
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-08 Crear conexión zona A -> zona B
+       Esperado: 201 | Recibido: 201
+[PASS] SETUP-09 Crear conexión reversa
+       Esperado: 201 | Recibido: 201
+[PASS] AC2-01 Consultar cobertura existente
+       Esperado: 200 | Recibido: 200
+[PASS] AC2-02 Confirmar resultado cubierto
+       La zona Zona Acceptance B se encuentra dentro de la cobertura de Base Acceptance Feature 2.
+[PASS] AC2-03 Validar camino encontrado
+       BASE-ACC2-20261028212746680679 -> ZONE-ACC2-A-20261028212746680679 -> ZONE-ACC2-B-20261028212746680679
+[PASS] AC2-04 Validar traza BFS
+       BASE-ACC2-20261028212746680679 -> ZONE-ACC2-A-20261028212746680679 -> ZONE-ACC2-B-20261028212746680679
+[PASS] AC2-05 Listar alcance de una base
+       Esperado: 200 | Recibido: 200
+[PASS] AC2-06 Validar zonas alcanzables
+       Zonas: ['ZONE-ACC2-A-20261028212746680679', 'ZONE-ACC2-B-20261028212746680679']
+[PASS] AC2-07 Consultar zona desconectada
+       Esperado: 200 | Recibido: 200
+[PASS] AC2-08 Zona desconectada sin cobertura
+       La zona Zona Acceptance Aislada no es alcanzable desde Base Acceptance Feature 2.
+[PASS] AC2-09 Rechazar origen inexistente
+       Esperado: 400 | Recibido: 400
+[PASS] AC2-10 Consultar sentido inverso
+       Esperado: 200 | Recibido: 200
+[PASS] AC2-11 Respetar direccionalidad
+       La conexión existe únicamente zona -> base.
+[PASS] AC2-12 Rechazar ZONE como origen
+       Esperado: 400 | Recibido: 400
+
+Limpieza de datos de aceptación: 9 registro(s) eliminado(s).
+
+========================================================================
+RESULTADO
+========================================================================
+Pruebas aprobadas: 21
+Pruebas fallidas:  0
+
+FEATURE 2: ACEPTACION EXITOSA
