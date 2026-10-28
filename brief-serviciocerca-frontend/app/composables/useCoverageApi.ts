@@ -7,6 +7,8 @@ import type {
   NodeCreatePayload,
   Technician,
   TechnicianCreatePayload,
+  CoverageCheckResult,
+  CoverageReachabilityResult,
 } from '~/types/coverage'
 
 
@@ -82,6 +84,28 @@ export function useCoverageApi() {
     )
   }
 
+  function getReachability(
+    originId: number,
+    destinationId?: number,
+  ) {
+    const query: Record<string, number> = {
+      origin_id: originId,
+    }
+
+    if (destinationId !== undefined) {
+      query.destination_id = destinationId
+    }
+
+    return $fetch<
+      CoverageCheckResult | CoverageReachabilityResult
+    >(
+      `${apiBase}/reachability/`,
+      {
+        query,
+      },
+    )
+  }
+
 
   return {
     getNodes,
@@ -92,6 +116,7 @@ export function useCoverageApi() {
 
     getConnections,
     createConnection,
+    getReachability,
 
     getNetwork,
   }

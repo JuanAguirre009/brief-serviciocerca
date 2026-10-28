@@ -54,3 +54,35 @@ export interface ConnectionCreatePayload {
   estimated_minutes: number
   is_bidirectional: boolean
 }
+
+export interface ReachabilityNode {
+  id: number
+  code: string
+  name: string
+  type: NodeType
+}
+
+export interface CoverageCheckResult {
+  mode: 'check'
+  covered: boolean
+  origin: ReachabilityNode
+  destination: ReachabilityNode
+  path: ReachabilityNode[]
+  traversal_order: ReachabilityNode[]
+  visited_count: number
+  message: string
+}
+
+export interface CoverageReachabilityResult {
+  mode: 'reachability'
+  origin: ReachabilityNode
+  reachable_count: number
+  reachable_nodes: ReachabilityNode[]
+  traversal_order: ReachabilityNode[]
+  visited_count: number
+  message: string
+}
+
+export type CoverageQueryResult =
+  | CoverageCheckResult
+  | CoverageReachabilityResult

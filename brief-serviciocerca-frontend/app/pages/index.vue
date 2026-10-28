@@ -1,188 +1,221 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
+import {
+  ArrowRight,
+  Building2,
+  MapPin,
+  Network,
+  RefreshCw,
+  UsersRound,
+  Activity,
+} from 'lucide-vue-next'
 import { useNetwork } from '~/composables/useNetwork'
-
-
 const { network, loading, errorMessage, refresh } = useNetwork()
+const bases = computed(
+  () => network.value.nodes.filter((n) => n.type === 'BASE').length,
+)
+const zones = computed(
+  () => network.value.nodes.filter((n) => n.type === 'ZONE').length,
+)
+const available = computed(
+  () => network.value.technicians.filter((t) => t.is_available).length,
+)
+const status = computed(() =>
+  errorMessage.value
+    ? 'Sin conexión'
+    : loading.value
+      ? 'Actualizando'
+      : network.value.nodes.length
+        ? 'Red disponible'
+        : 'Sin configurar',
+)
+const kpis = computed(() => [
+  {
+    label: 'Bases operativas',
+    value: bases.value,
+    helper: 'Puntos de origen',
+    icon: Building2,
+  },
+  {
+    label: 'Zonas',
+    value: zones.value,
+    helper: 'Áreas registradas',
+    icon: MapPin,
+  },
+  {
+    label: 'Técnicos disponibles',
+    value: available.value,
+    helper: `${network.value.technicians.length} registrados`,
+    icon: UsersRound,
+  },
+  {
+    label: 'Conexiones',
+    value: network.value.connections.length,
+    helper: 'Enlaces de la red',
+    icon: Network,
+  },
+])
 </script>
-
-
-
 <template>
-  <main class="container">
-    <header class="page-header">
+  <div class="page">
+    <header class="page-heading">
       <div>
-        <p class="eyebrow">
-          Configuración
-        </p>
-
-        <h1>Red de cobertura</h1>
-
+        <span class="eyebrow">RESUMEN OPERACIONAL</span>
+        <h2>Tu operación, en un solo lugar</h2>
         <p>
-          Registra bases, zonas, técnicos y conexiones operativas.
+          Supervisa los recursos y consulta el alcance de tu red de servicio.
         </p>
       </div>
-
-      <button
-        class="secondary"
-        :disabled="loading"
-        @click="refresh"
-      >
-        <span
-          v-if="loading"
-          class="spinner"
-        />
-
-        {{ loading ? 'Actualizando...' : 'Actualizar red' }}
+      <button class="button" :disabled="loading" @click="refresh">
+        <RefreshCw :size="16" :class="{ spinning: loading }" /> Actualizar datos
       </button>
     </header>
-
-
-    <div
-      v-if="errorMessage"
-      class="alert error"
-    >
+    <p v-if="errorMessage" class="alert error" role="alert">
       {{ errorMessage }}
-    </div>
-
-
-    <div class="dashboard">
-      <section class="dashboard-card">
-        <div class="card-header">
-          <h2>Registrar elementos</h2>
-
-          <p>
-            Completa los formularios para construir la red.
-          </p>
-        </div>
-
-        <div class="forms-stack">
-          <CoverageNodeForm @created="refresh" />
-
-          <CoverageTechnicianForm
-            :nodes="network.nodes"
-            @created="refresh"
-          />
-
-          <CoverageConnectionForm
-            :nodes="network.nodes"
-            @created="refresh"
-          />
-        </div>
-      </section>
-
-
-      <section class="dashboard-card">
-        <div class="card-header">
-          <h2>Visualización de la red</h2>
-
-          <p>
-            Bases, zonas y conexiones operativas.
-          </p>
-        </div>
-
-        <CoverageNetworkGraph :network="network" />
-      </section>
-    </div>
-
-
-    <p
-      v-if="loading"
-      class="loading"
-    >
-      <span class="spinner" />
-
-      Cargando red...
     </p>
-
-    <CoverageNetworkList
-      v-else
-      :network="network"
-    />
-  </main>
+    <section
+      class="kpi-grid"
+      aria-label="Indicadores de la red"
+      :aria-busy="loading"
+    >
+      <article v-for="kpi in kpis" :key="kpi.label" class="card kpi">
+        <span class="kpi-icon"
+          ><component :is="kpi.icon" :size="20" aria-hidden="true"
+        /></span>
+        <div>
+          <span class="kpi-label">{{ kpi.label }}</span
+          ><strong>{{ loading || errorMessage ? '—' : kpi.value }}</strong
+          ><small>{{ kpi.helper }}</small>
+        </div>
+      </article>
+    </section>
+    <section class="operations-grid">
+      <article class="card coverage-action">
+        <div>
+          <span class="eyebrow">COBERTURA TÉCNICA</span>
+          <h3>¿Podemos atender esta zona?</h3>
+          <p>
+            Selecciona una base y una zona para comprobar la cobertura y
+            visualizar la ruta encontrada.
+          </p>
+        </div>
+        <NuxtLink to="/coverage" class="button button--primary"
+          >Consultar cobertura <ArrowRight :size="16"
+        /></NuxtLink>
+      </article>
+      <article class="card network-action">
+        <span class="eyebrow">INFRAESTRUCTURA</span>
+        <h3>Red operacional</h3>
+        <span
+          class="badge"
+          :class="{
+            'badge--success':
+              !loading && !errorMessage && network.nodes.length > 0,
+          }"
+          ><Activity :size="14" />{{ status }}</span
+        >
+        <p>
+          Administra bases, zonas, técnicos y conexiones desde la configuración.
+        </p>
+        <NuxtLink to="/network" class="button"
+          >Configurar red <ArrowRight :size="16"
+        /></NuxtLink>
+      </article>
+    </section>
+    <div v-if="!loading && !errorMessage && !network.nodes.length" class="hint">
+      Todavía no hay una red configurada. Agrega tu primera base y las zonas de
+      servicio desde <NuxtLink to="/network">Configuración de red</NuxtLink>.
+    </div>
+  </div>
 </template>
-
-
 <style scoped>
-.dashboard {
+.kpi-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: start;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
 }
-
-.dashboard-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  min-width: 0;
-  overflow: hidden;
+.kpi {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
 }
-
-.dashboard-card:last-child {
-  position: sticky;
-  top: 90px;
-  padding: 24px;
+.kpi-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--primary-hover);
+  background: var(--primary-soft);
 }
-
-.card-header {
-  padding: 24px 24px 0;
-  margin-bottom: 20px;
-}
-
-.card-header h2 {
-  margin: 0 0 4px;
-  font-size: 1.25rem;
-}
-
-.card-header p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.95rem;
-}
-
-.forms-stack {
+.kpi > div {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.kpi-label,
+.kpi small {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+.kpi strong {
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+.operations-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: 16px;
-  padding: 0 24px 24px;
+  margin: 20px 0;
 }
-
-.forms-stack > :deep(.card) {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  box-shadow: none;
+.coverage-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 26px;
+  border-top: 3px solid var(--primary);
 }
-
-.forms-stack > :deep(.card) h2 {
-  font-size: 1.1rem;
+.coverage-action h3 {
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
 }
-
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.75s linear infinite;
-  margin-right: 8px;
-  vertical-align: middle;
+.operations-grid p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 560px;
 }
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+.network-action .badge {
+  margin-top: 16px;
+}
+@media (max-width: 1200px) {
+  .kpi {
+    padding: 14px;
+    gap: 9px;
+  }
+  .kpi-icon {
+    flex-basis: 28px;
+    height: 28px;
   }
 }
-
 @media (max-width: 900px) {
-  .dashboard {
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .operations-grid {
     grid-template-columns: 1fr;
   }
-
-  .dashboard-card:last-child {
-    position: static;
+  .kpi {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .coverage-action {
+    padding: 20px;
   }
 }
 </style>
