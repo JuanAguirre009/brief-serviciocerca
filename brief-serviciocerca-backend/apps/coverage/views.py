@@ -23,6 +23,7 @@ from .serializers import (
     ConnectionSerializer,
     CoverageNodeCreateSerializer,
     CoverageNodeSerializer,
+    CoverageReachabilityQuerySerializer,
     TechnicianCreateSerializer,
     TechnicianSerializer,
 )
@@ -30,6 +31,10 @@ from .services import (
     connection_create,
     node_create,
     technician_create,
+)
+from .reachability import (
+    check_coverage,
+    list_reachable_nodes,
 )
 
 
@@ -220,5 +225,61 @@ class CoverageNetworkAPIView(APIView):
                     many=True,
                 ).data,
             },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CoverageReachabilityAPIView(APIView):
+    """
+    Feature 2 coverage query endpoint.
+
+    GET with origin_id only:
+        Return every service zone reachable from the base.
+
+    GET with origin_id + destination_id:
+        Check whether a specific service zone is reachable.
+    """
+
+    def get(self, request: Request):
+        query_serializer = CoverageReachabilityQuerySerializer(
+            data=request.query_params,
+        )
+
+        query_serializer.is_valid(
+            raise_exception=True,
+        )
+
+        validated_data = (
+            query_serializer.validated_data
+        )
+
+        origin_id = validated_data[
+            "origin_id"
+        ]
+
+        destination_id = (
+            validated_data.get(
+                "destination_id"
+            )
+        )
+
+        try:
+            if destination_id is None:
+                result = list_reachable_nodes(
+                    origin_id=origin_id,
+                )
+            else:
+                result = check_coverage(
+                    origin_id=origin_id,
+                    destination_id=destination_id,
+                )
+
+        except DjangoValidationError as exc:
+            _raise_drf_validation_error(
+                exc
+            )
+
+        return Response(
+            result,
             status=status.HTTP_200_OK,
         )
