@@ -298,18 +298,25 @@ class ShortestRouteTests(TestCase):
 
     def test_one_way_link_cannot_be_traversed_in_reverse(self):
         """
-        other_base has a bidirectional_zone connection, but only
-        from other_base. The edge from zone_a does NOT point back to
-        base, so base cannot be reached from zone_a (reverse direction).
-        We validate by trying other_base -> zone_a which has no path.
+        Una conexión ZONE -> BASE no debe permitir
+        desplazarse desde BASE hacia ZONE.
         """
+    
+        connection_create(
+            origin_id=self.reverse_zone.id,
+            destination_id=self.other_base.id,
+            estimated_minutes=4,
+            is_bidirectional=False,
+        )
+    
         result = calculate_shortest_route(
             origin_id=self.other_base.id,
-            destination_id=self.zone_a.id,
+            destination_id=self.reverse_zone.id,
         )
-
+    
         self.assertFalse(result["reachable"])
         self.assertEqual(result["path"], [])
+        self.assertIsNone(result["total_minutes"])
 
     def test_bidirectional_connection_allows_both_directions(self):
         """
