@@ -9,85 +9,52 @@ import type {
   TechnicianCreatePayload,
   CoverageCheckResult,
   CoverageReachabilityResult,
+  ShortestRouteResult,
 } from '~/types/coverage'
-
 
 export function useCoverageApi() {
   const config = useRuntimeConfig()
 
   const apiBase = config.public.apiBase
 
-
   function getNodes() {
-    return $fetch<CoverageNode[]>(
-      `${apiBase}/nodes/`,
-    )
+    return $fetch<CoverageNode[]>(`${apiBase}/nodes/`)
   }
 
-
-  function createNode(
-    payload: NodeCreatePayload,
-  ) {
-    return $fetch<CoverageNode>(
-      `${apiBase}/nodes/`,
-      {
-        method: 'POST',
-        body: payload,
-      },
-    )
+  function createNode(payload: NodeCreatePayload) {
+    return $fetch<CoverageNode>(`${apiBase}/nodes/`, {
+      method: 'POST',
+      body: payload,
+    })
   }
-
 
   function getTechnicians() {
-    return $fetch<Technician[]>(
-      `${apiBase}/technicians/`,
-    )
+    return $fetch<Technician[]>(`${apiBase}/technicians/`)
   }
 
-
-  function createTechnician(
-    payload: TechnicianCreatePayload,
-  ) {
-    return $fetch<Technician>(
-      `${apiBase}/technicians/`,
-      {
-        method: 'POST',
-        body: payload,
-      },
-    )
+  function createTechnician(payload: TechnicianCreatePayload) {
+    return $fetch<Technician>(`${apiBase}/technicians/`, {
+      method: 'POST',
+      body: payload,
+    })
   }
-
 
   function getConnections() {
-    return $fetch<Connection[]>(
-      `${apiBase}/connections/`,
-    )
+    return $fetch<Connection[]>(`${apiBase}/connections/`)
   }
 
-
-  function createConnection(
-    payload: ConnectionCreatePayload,
-  ) {
-    return $fetch<Connection>(
-      `${apiBase}/connections/`,
-      {
-        method: 'POST',
-        body: payload,
-      },
-    )
+  function createConnection(payload: ConnectionCreatePayload) {
+    return $fetch<Connection>(`${apiBase}/connections/`, {
+      method: 'POST',
+      body: payload,
+    })
   }
-
 
   function getNetwork() {
-    return $fetch<CoverageNetwork>(
-      `${apiBase}/network/`,
-    )
+    return $fetch<CoverageNetwork>(`${apiBase}/network/`)
   }
 
-  function getReachability(
-    originId: number,
-    destinationId?: number,
-  ) {
+  function getReachability(originId: number, destinationId?: number) {
     const query: Record<string, number> = {
       origin_id: originId,
     }
@@ -96,9 +63,7 @@ export function useCoverageApi() {
       query.destination_id = destinationId
     }
 
-    return $fetch<
-      CoverageCheckResult | CoverageReachabilityResult
-    >(
+    return $fetch<CoverageCheckResult | CoverageReachabilityResult>(
       `${apiBase}/reachability/`,
       {
         query,
@@ -106,6 +71,11 @@ export function useCoverageApi() {
     )
   }
 
+  function getShortestRoute(originId: number, destinationId: number) {
+    return $fetch<ShortestRouteResult>(`${apiBase}/shortest-route/`, {
+      query: { origin_id: originId, destination_id: destinationId },
+    })
+  }
 
   return {
     getNodes,
@@ -117,6 +87,7 @@ export function useCoverageApi() {
     getConnections,
     createConnection,
     getReachability,
+    getShortestRoute,
 
     getNetwork,
   }

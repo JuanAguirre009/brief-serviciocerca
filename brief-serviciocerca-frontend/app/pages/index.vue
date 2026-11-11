@@ -98,9 +98,14 @@ const kpis = computed(() => [
             visualizar la ruta encontrada.
           </p>
         </div>
-        <NuxtLink to="/coverage" class="button button--primary"
-          >Consultar cobertura <ArrowRight :size="16"
-        /></NuxtLink>
+        <div class="dashboard-route-actions">
+          <NuxtLink to="/coverage" class="button button--primary"
+            >Consultar cobertura <ArrowRight :size="16"
+          /></NuxtLink>
+          <NuxtLink to="/routes" class="button"
+            >Explorar rutas óptimas <ArrowRight :size="16"
+          /></NuxtLink>
+        </div>
       </article>
       <article class="card network-action">
         <span class="eyebrow">INFRAESTRUCTURA</span>
@@ -182,6 +187,11 @@ const kpis = computed(() => [
 .coverage-action h3 {
   font-size: 1.5rem;
   letter-spacing: -0.03em;
+}
+.dashboard-route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .operations-grid p {
   color: var(--text-secondary);

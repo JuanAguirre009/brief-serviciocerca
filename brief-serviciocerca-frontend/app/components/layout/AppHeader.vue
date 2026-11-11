@@ -4,9 +4,11 @@ const route = useRoute()
 const title = computed(() =>
   route.path.startsWith('/coverage')
     ? 'Consulta de cobertura'
-    : route.path.startsWith('/network')
-      ? 'Configuración de red'
-      : 'Centro de operaciones',
+    : route.path.startsWith('/routes')
+      ? 'Rutas óptimas'
+      : route.path.startsWith('/network')
+        ? 'Configuración de red'
+        : 'Centro de operaciones',
 )
 </script>
 <template>

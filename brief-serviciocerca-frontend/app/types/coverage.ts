@@ -84,5 +84,30 @@ export interface CoverageReachabilityResult {
 }
 
 export type CoverageQueryResult =
-  | CoverageCheckResult
-  | CoverageReachabilityResult
+  CoverageCheckResult | CoverageReachabilityResult
+
+export type RouteNode = ReachabilityNode
+export type RouteTraversal = RouteNode[]
+
+export interface RouteSegment {
+  origin: RouteNode
+  destination: RouteNode
+  estimated_minutes: number
+}
+
+interface ShortestRouteBase {
+  mode: 'shortest_route'
+  origin: RouteNode
+  destination: RouteNode
+  path: RouteNode[]
+  segments: RouteSegment[]
+  traversal_order: RouteTraversal
+  visited_count: number
+  message: string
+}
+
+export type ShortestRouteResult = ShortestRouteBase &
+  (
+    | { reachable: true; total_minutes: number }
+    | { reachable: false; total_minutes: null }
+  )

@@ -28,7 +28,7 @@ import BaseNode from './BaseNode.vue'
 import ZoneNode from './ZoneNode.vue'
 import OperationalEdge from './OperationalEdge.vue'
 import { layoutNetwork } from '~/utils/layoutNetwork'
-import type { CoverageNetwork } from '~/types/coverage'
+import type { CoverageNetwork, RouteSegment } from '~/types/coverage'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
@@ -38,6 +38,7 @@ const props = defineProps<{
   error?: string
   visitedNodeIds?: number[]
   pathNodeIds?: number[]
+  pathSegments?: RouteSegment[]
   originId?: number | null
   destinationId?: number | null
   resultKey?: number
@@ -70,6 +71,23 @@ const pathPairs = computed(() => {
   const ids = props.pathNodeIds ?? []
   return new Set(ids.slice(1).map((nodeId, index) => `${ids[index]}-${nodeId}`))
 })
+const selectedConnections = computed(() => {
+  if (props.pathSegments === undefined) return null
+  const ids = new Set<number>()
+  for (const segment of props.pathSegments) {
+    const matches = props.network.connections.filter(
+      (connection) =>
+        connection.estimated_minutes === segment.estimated_minutes &&
+        ((connection.origin.id === segment.origin.id &&
+          connection.destination.id === segment.destination.id) ||
+          (connection.is_bidirectional &&
+            connection.origin.id === segment.destination.id &&
+            connection.destination.id === segment.origin.id)),
+    )
+    if (matches.length === 1) ids.add(matches[0]!.id)
+  }
+  return ids
+})
 const edgeLanes = computed(() => {
   const groups = new Map<string, number[]>()
   for (const connection of props.network.connections) {
@@ -94,8 +112,10 @@ const flowEdges = computed<Edge[]>(() =>
     const from = connection.origin.id
     const to = connection.destination.id
     const isPath =
-      pathPairs.value.has(`${from}-${to}`) ||
-      (connection.is_bidirectional && pathPairs.value.has(`${to}-${from}`))
+      selectedConnections.value === null
+        ? pathPairs.value.has(`${from}-${to}`) ||
+          (connection.is_bidirectional && pathPairs.value.has(`${to}-${from}`))
+        : selectedConnections.value.has(connection.id)
     const backwards =
       (positions.value.get(from)?.x ?? 0) >= (positions.value.get(to)?.x ?? 0)
     const stroke = isPath ? '#356ae6' : '#9aacc1'
@@ -157,6 +177,7 @@ watch(
     () => props.network,
     () => props.visitedNodeIds,
     () => props.pathNodeIds,
+    () => props.pathSegments,
     () => props.originId,
     () => props.destinationId,
     () => props.resultKey,

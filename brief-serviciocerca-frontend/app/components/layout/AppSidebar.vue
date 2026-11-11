@@ -1,8 +1,15 @@
 ﻿<script setup lang="ts">
-import { LayoutDashboard, Network, Radar, Route } from 'lucide-vue-next'
+import {
+  GitBranch,
+  LayoutDashboard,
+  Network,
+  Radar,
+  Route,
+} from 'lucide-vue-next'
 const navigation = [
   { label: 'Resumen', to: '/', icon: LayoutDashboard },
   { label: 'Cobertura', to: '/coverage', icon: Radar },
+  { label: 'Rutas óptimas', to: '/routes', icon: GitBranch },
   { label: 'Red', to: '/network', icon: Network },
 ]
 </script>
@@ -201,6 +208,23 @@ nav {
   }
   .navigation-item--active::before {
     display: none;
+  }
+}
+@media (max-width: 600px) {
+  .sidebar-section {
+    width: calc(100% - 48px);
+  }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+  }
+  .navigation-item {
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 2px;
+    font-size: 0.7rem;
+    text-align: center;
   }
 }
 </style>
