@@ -5,6 +5,7 @@ from .views import (
     CoverageNetworkAPIView,
     CoverageNodeListCreateAPIView,
     CoverageReachabilityAPIView,
+    CoverageShortestRouteAPIView,
     TechnicianListCreateAPIView,
 )
 
@@ -37,5 +38,10 @@ urlpatterns = [
         "reachability/",
         CoverageReachabilityAPIView.as_view(),
         name="reachability",
+    ),
+    path(
+        "shortest-route/",
+        CoverageShortestRouteAPIView.as_view(),
+        name="shortest-route",
     ),
 ]

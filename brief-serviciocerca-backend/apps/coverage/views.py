@@ -24,6 +24,7 @@ from .serializers import (
     CoverageNodeCreateSerializer,
     CoverageNodeSerializer,
     CoverageReachabilityQuerySerializer,
+    ShortestRouteQuerySerializer,
     TechnicianCreateSerializer,
     TechnicianSerializer,
 )
@@ -36,6 +37,7 @@ from .reachability import (
     check_coverage,
     list_reachable_nodes,
 )
+from .shortest_route import calculate_shortest_route
 
 
 def _raise_drf_validation_error(
@@ -278,6 +280,30 @@ class CoverageReachabilityAPIView(APIView):
             _raise_drf_validation_error(
                 exc
             )
+
+        return Response(
+            result,
+            status=status.HTTP_200_OK,
+        )
+
+
+class CoverageShortestRouteAPIView(APIView):
+    """Feature 3: minimum-time route using the existing Dijkstra logic."""
+
+    def get(self, request: Request):
+        query_serializer = ShortestRouteQuerySerializer(
+            data=request.query_params,
+        )
+        query_serializer.is_valid(raise_exception=True)
+        validated_data = query_serializer.validated_data
+
+        try:
+            result = calculate_shortest_route(
+                origin_id=validated_data["origin_id"],
+                destination_id=validated_data["destination_id"],
+            )
+        except DjangoValidationError as exc:
+            _raise_drf_validation_error(exc)
 
         return Response(
             result,

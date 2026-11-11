@@ -126,3 +126,17 @@ class CoverageReachabilityQuerySerializer(serializers.Serializer):
         min_value=1,
         required=False,
     )
+
+
+class ShortestRouteQuerySerializer(serializers.Serializer):
+    """Validate the required positive node identifiers for Feature 3."""
+
+    origin_id = serializers.IntegerField(
+        min_value=1,
+        required=True,
+    )
+
+    destination_id = serializers.IntegerField(
+        min_value=1,
+        required=True,
+    )
