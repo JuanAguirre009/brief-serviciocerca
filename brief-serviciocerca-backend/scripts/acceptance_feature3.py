@@ -109,7 +109,7 @@ def create_node(code, name, node_type, case):
     )
     # Track only successfully created rows, never delete pre-existing codes.
     if status_code == 201 and isinstance(body, dict) and isinstance(body.get("id"), int):
-        created_nodes.append((body["id"], code))
+        created_nodes.append((body["id"], body["code"]))
     require(
         case,
         status_code == 201
@@ -169,7 +169,10 @@ def main():
     print(f"API: {API_BASE}")
     print()
 
-    unique = datetime.now().strftime("%Y%m%d%H%M%S") + uuid4().hex[:8]
+    unique = (
+        datetime.now().strftime("%Y%m%d%H%M%S")
+        + uuid4().hex[:8]
+    ).upper()
     ids = {
         "base": f"F3-BN-{unique}",
         "a": f"F3-ZA-{unique}",

@@ -1,0 +1,63 @@
+Archivo de evidencia: /app/evidence/acceptance/feature3_acceptance_20261111_183258.txt
+========================================================================
+SERVICIOCERCA - ACEPTACION FEATURE 3
+========================================================================
+API: http://127.0.0.1:8000/api/coverage
+
+[PASS] SETUP-01 Crear base principal | HTTP 201 | {'id': 13, 'code': 'F3-BN-20261111183258A312B78A', 'name': 'Base Norte', 'type': 'BASE', 'created_at': '2026-11-11T18:32:58.702408Z', 'updated_at': '2026-11-11T18:32:58.702421Z'}
+[PASS] SETUP-02 Crear zona A | HTTP 201 | {'id': 14, 'code': 'F3-ZA-20261111183258A312B78A', 'name': 'Laureles', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.724767Z', 'updated_at': '2026-11-11T18:32:58.724780Z'}
+[PASS] SETUP-03 Crear zona B | HTTP 201 | {'id': 15, 'code': 'F3-ZB-20261111183258A312B78A', 'name': 'Estadio', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.751869Z', 'updated_at': '2026-11-11T18:32:58.751882Z'}
+[PASS] SETUP-04 Crear zona destino | HTTP 201 | {'id': 16, 'code': 'F3-ZD-20261111183258A312B78A', 'name': 'Belen', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.775097Z', 'updated_at': '2026-11-11T18:32:58.775108Z'}
+[PASS] SETUP-05 Crear zona aislada | HTTP 201 | {'id': 17, 'code': 'F3-ZI-20261111183258A312B78A', 'name': 'Aislada', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.798372Z', 'updated_at': '2026-11-11T18:32:58.798385Z'}
+[PASS] SETUP-06 Crear base secundaria | HTTP 201 | {'id': 18, 'code': 'F3-BS-20261111183258A312B78A', 'name': 'Base Sur', 'type': 'BASE', 'created_at': '2026-11-11T18:32:58.821055Z', 'updated_at': '2026-11-11T18:32:58.821077Z'}
+[PASS] SETUP-07 Crear zona inversa | HTTP 201 | {'id': 19, 'code': 'F3-ZR-20261111183258A312B78A', 'name': 'Reversa', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.844718Z', 'updated_at': '2026-11-11T18:32:58.844728Z'}
+[PASS] SETUP-08 Crear zona bidireccional | HTTP 201 | {'id': 20, 'code': 'F3-ZX-20261111183258A312B78A', 'name': 'Bidireccional', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.863354Z', 'updated_at': '2026-11-11T18:32:58.863363Z'
+[PASS] SETUP-09 Conexion directa de 30 | HTTP 201 | {'id': 10, 'origin': {'id': 13, 'code': 'F3-BN-20261111183258A312B78A', 'name': 'Base Norte', 'type': 'BASE', 'created_at': '2026-11-11T18:32:58.702408Z', 'updated_at': '2026-11-11
+[PASS] SETUP-10 Conexion base a zona A de 5 | HTTP 201 | {'id': 11, 'origin': {'id': 13, 'code': 'F3-BN-20261111183258A312B78A', 'name': 'Base Norte', 'type': 'BASE', 'created_at': '2026-11-11T18:32:58.702408Z', 'updated_at': '2026-11-11
+[PASS] SETUP-11 Conexion zona A a B de 7 | HTTP 201 | {'id': 12, 'origin': {'id': 14, 'code': 'F3-ZA-20261111183258A312B78A', 'name': 'Laureles', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.724767Z', 'updated_at': '2026-11-11T1
+[PASS] SETUP-12 Conexion zona B a destino de 8 | HTTP 201 | {'id': 13, 'origin': {'id': 15, 'code': 'F3-ZB-20261111183258A312B78A', 'name': 'Estadio', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.751869Z', 'updated_at': '2026-11-11T18
+[PASS] SETUP-13 Conexion inversa | HTTP 201 | {'id': 14, 'origin': {'id': 19, 'code': 'F3-ZR-20261111183258A312B78A', 'name': 'Reversa', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.844718Z', 'updated_at': '2026-11-11T18
+[PASS] SETUP-14 Conexion bidireccional | HTTP 201 | {'id': 15, 'origin': {'id': 20, 'code': 'F3-ZX-20261111183258A312B78A', 'name': 'Bidireccional', 'type': 'ZONE', 'created_at': '2026-11-11T18:32:58.863354Z', 'updated_at': '2026-11
+[PASS] AC3-01 Obtener red antes de consultas | HTTP 200; expected 200; body: OK
+[PASS] AC3-02 Endpoint devuelve HTTP 200 | HTTP 200; expected 200; body: OK
+[PASS] AC3-03 Modo shortest_route
+[PASS] AC3-04 Destino alcanzable
+[PASS] AC3-05 Ruta optima usa 20 y no 30
+[PASS] AC3-06 Orden completo de nodos
+[PASS] AC3-07 Minutos por segmento | [5, 7, 8]
+[PASS] AC3-08 Suma segmentos equivale al total
+[PASS] AC3-09 Traza Dijkstra
+[PASS] AC3-10 Contador de visitados
+[PASS] AC3-11 Origen y destino correctos
+[PASS] AC3-12 Sin ruta devuelve HTTP 200 | HTTP 200; expected 200; body: OK
+[PASS] AC3-13 Destino desconectado sin tiempo ni segmentos
+[PASS] AC3-14 Origen inexistente | HTTP 400; expected validation field origin; body: {'origin': ['No existe un nodo de cobertura con id 1000999999.']}
+[PASS] AC3-15 Destino inexistente | HTTP 400; expected validation field destination; body: {'destination': ['No existe un nodo de cobertura con id 1000999999.']}
+[PASS] AC3-16 Origen debe ser BASE | HTTP 400; expected validation field origin; body: {'origin': ['El origen debe ser un nodo de tipo BASE.']}
+[PASS] AC3-17 Destino debe ser ZONE | HTTP 400; expected validation field destination; body: {'destination': ['El destino debe ser un nodo de tipo ZONE.']}
+[PASS] AC3-18 Falta origin_id | HTTP 400; expected validation field origin_id; body: {'origin_id': ['This field is required.']}
+[PASS] AC3-19 Falta destination_id | HTTP 400; expected validation field destination_id; body: {'destination_id': ['This field is required.']}
+[PASS] AC3-20 origin_id no numerico | HTTP 400; expected validation field origin_id; body: {'origin_id': ['A valid integer is required.']}
+[PASS] AC3-21 destination_id no numerico | HTTP 400; expected validation field destination_id; body: {'destination_id': ['A valid integer is required.']}
+[PASS] AC3-22 origin_id cero | HTTP 400; expected validation field origin_id; body: {'origin_id': ['Ensure this value is greater than or equal to 1.']}
+[PASS] AC3-23 destination_id negativo | HTTP 400; expected validation field destination_id; body: {'destination_id': ['Ensure this value is greater than or equal to 1.']}
+[PASS] AC3-24 Respetar sentido inverso
+[PASS] AC3-25 Conexion bidireccional
+[PASS] AC3-26 Feature 2 BFS sigue funcionando
+[PASS] AC3-27 Consultas no alteran la red
+[PASS] CLEANUP nodo F3-ZX-20261111183258A312B78A | Registros eliminados (incluye cascadas): 2
+[PASS] CLEANUP nodo F3-ZR-20261111183258A312B78A | Registros eliminados (incluye cascadas): 2
+[PASS] CLEANUP nodo F3-BS-20261111183258A312B78A | Registros eliminados (incluye cascadas): 1
+[PASS] CLEANUP nodo F3-ZI-20261111183258A312B78A | Registros eliminados (incluye cascadas): 1
+[PASS] CLEANUP nodo F3-ZD-20261111183258A312B78A | Registros eliminados (incluye cascadas): 3
+[PASS] CLEANUP nodo F3-ZB-20261111183258A312B78A | Registros eliminados (incluye cascadas): 2
+[PASS] CLEANUP nodo F3-ZA-20261111183258A312B78A | Registros eliminados (incluye cascadas): 2
+[PASS] CLEANUP nodo F3-BN-20261111183258A312B78A | Registros eliminados (incluye cascadas): 1
+
+========================================================================
+RESULTADO
+========================================================================
+Pruebas aprobadas: 49
+Pruebas fallidas:  0
+
+FEATURE 3: ACEPTACION EXITOSA
