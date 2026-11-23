@@ -1,0 +1,71 @@
+Archivo: /app/evidence/acceptance/feature4_acceptance_20261123_214236_ac7cd.txt
+
+SERVICIOCERCA - ACEPTACION FEATURE 4
+API: http://127.0.0.1:8000/api/coverage
+
+[PASS] AC4-01 API de red disponible
+[PASS] AC4-02 Crear Base Norte F4 | HTTP 201
+[PASS] AC4-03 Crear Laureles F4 | HTTP 201
+[PASS] AC4-04 Crear Estadio F4 | HTTP 201
+[PASS] AC4-05 Crear Belen F4 | HTTP 201
+[PASS] AC4-06 Crear Zona aislada F4 | HTTP 201
+[PASS] AC4-07 Crear Base Sur F4 | HTTP 201
+[PASS] AC4-08 Crear Zona reversa F4 | HTTP 201
+[PASS] AC4-09 Crear Zona bidireccional F4 | HTTP 201
+[PASS] AC4-10 Crear conexion Base Norte F4 -> Belen F4 | HTTP 201
+[PASS] AC4-11 Crear conexion Base Norte F4 -> Laureles F4 | HTTP 201
+[PASS] AC4-12 Crear conexion Laureles F4 -> Estadio F4 | HTTP 201
+[PASS] AC4-13 Crear conexion Estadio F4 -> Belen F4 | HTTP 201
+[PASS] AC4-14 Crear conexion Zona reversa F4 -> Base Sur F4 | HTTP 201
+[PASS] AC4-15 Crear conexion Zona bidireccional F4 -> Base Sur F4 | HTTP 201
+[PASS] AC4-16 Red contiene los nodos de esta prueba
+[PASS] AC4-17 Consulta Dijkstra HTTP 200
+[PASS] AC4-18 Destino alcanzable
+[PASS] AC4-19 Modo de consulta correcto
+[PASS] AC4-20 Tiempo minimo real: 20 y no 30
+[PASS] AC4-21 Camino ordenado para el operador
+[PASS] AC4-22 Minutos correctos por tramo
+[PASS] AC4-23 Tiempo total equivale a la suma de tramos
+[PASS] AC4-24 Tramos incluyen origen y destino correctos
+[PASS] AC4-25 Origen y destino del resultado correctos
+[PASS] AC4-26 Traza Dijkstra consistente
+[PASS] AC4-27 Consulta BFS HTTP 200
+[PASS] AC4-28 BFS confirma cobertura
+[PASS] AC4-29 BFS selecciona conexion directa de un tramo
+[PASS] AC4-30 El menor numero de tramos no es el menor tiempo
+[PASS] AC4-31 Red desconectada devuelve HTTP 200
+[PASS] AC4-32 Sin ruta no inventa tiempo ni recorrido
+[PASS] AC4-33 BFS tambien identifica la zona desconectada
+[PASS] AC4-34 Zona inexistente produce error de validacion | HTTP 400; {'destination': ['No existe un nodo de cobertura con id 1000999999.']}
+[PASS] AC4-35 Base inexistente produce error de validacion | HTTP 400; {'origin': ['No existe un nodo de cobertura con id 1000999999.']}
+[PASS] AC4-36 Origen debe ser BASE | HTTP 400; {'origin': ['El origen debe ser un nodo de tipo BASE.']}
+[PASS] AC4-37 Destino debe ser ZONE | HTTP 400; {'destination': ['El destino debe ser un nodo de tipo ZONE.']}
+[PASS] AC4-38 Parametro origin_id obligatorio | HTTP 400; {'origin_id': ['This field is required.']}
+[PASS] AC4-39 Identificador no numerico rechazado | HTTP 400; {'origin_id': ['A valid integer is required.']}
+[PASS] AC4-40 Peso invalido 0 rechazado | HTTP 400
+[PASS] AC4-41 Peso invalido -5 rechazado | HTTP 400
+[PASS] AC4-42 Peso invalido 'ABC' rechazado | HTTP 400
+[PASS] AC4-43 Pesos invalidos no generan conexiones
+[PASS] AC4-44 Conexion dirigida no permite regreso
+[PASS] AC4-45 Conexion bidireccional permite regreso
+[PASS] AC4-46 Consultas no modifican la red
+
+LIMPIEZA CONTROLADA
+[PASS] AC4-47 Eliminar conexion temporal 29
+[PASS] AC4-48 Eliminar conexion temporal 28
+[PASS] AC4-49 Eliminar conexion temporal 27
+[PASS] AC4-50 Eliminar conexion temporal 26
+[PASS] AC4-51 Eliminar conexion temporal 25
+[PASS] AC4-52 Eliminar conexion temporal 24
+[PASS] AC4-53 Eliminar nodo temporal F4-BI-CBFE399CC6C2
+[PASS] AC4-54 Eliminar nodo temporal F4-RE-CBFE399CC6C2
+[PASS] AC4-55 Eliminar nodo temporal F4-BS-CBFE399CC6C2
+[PASS] AC4-56 Eliminar nodo temporal F4-IS-CBFE399CC6C2
+[PASS] AC4-57 Eliminar nodo temporal F4-BE-CBFE399CC6C2
+[PASS] AC4-58 Eliminar nodo temporal F4-ES-CBFE399CC6C2
+[PASS] AC4-59 Eliminar nodo temporal F4-LA-CBFE399CC6C2
+[PASS] AC4-60 Eliminar nodo temporal F4-BN-CBFE399CC6C2
+
+Pruebas aprobadas: 60
+Pruebas fallidas: 0
+FEATURE 4: ACEPTACION EXITOSA
