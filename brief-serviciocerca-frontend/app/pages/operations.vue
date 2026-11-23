@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { LoaderCircle, MapPin, Search } from 'lucide-vue-next'
+import { ref, watch } from 'vue'
+import {
+  ChevronDown,
+  ChevronUp,
+  GitBranch,
+  LoaderCircle,
+  MapPin,
+  Search,
+} from 'lucide-vue-next'
 
 import OperationalRoute from '~/components/operations/OperationalRoute.vue'
 import QuickResult from '~/components/operations/QuickResult.vue'
+import DeepAnalysis from '~/components/operations/DeepAnalysis.vue'
+
 import { useRoutePlanning } from '~/composables/useRoutePlanning'
 
-
-useHead({ title: 'Consola de operación · ServicioCerca' })
-
+useHead({
+  title: 'Consola de operación · ServicioCerca',
+})
 
 const {
   network,
@@ -18,26 +28,54 @@ const {
   originId,
   destinationId,
   result,
+  bfs,
   queryLoading,
+  comparisonLoading,
   queryError,
+  comparisonError,
+  activeRoute,
+  resultKey,
   canQuery,
+  bfsMinutes,
+  comparison,
+  pathNodeIds,
+  visitedNodeIds,
+  highlightedSegments,
   calculateRoute,
+  compareWithBfs,
   refreshNetwork,
 } = useRoutePlanning()
-</script>
 
+const analysisOpen = ref(false)
+
+watch(
+  [originId, destinationId, result],
+  () => {
+    analysisOpen.value = false
+  },
+)
+
+function switchRoute(
+  mode: 'dijkstra' | 'bfs',
+) {
+  activeRoute.value = mode
+}
+</script>
 
 <template>
   <div class="page operations-page">
+
     <header class="page-heading">
       <div>
-        <span class="eyebrow">Operaciones</span>
+        <span class="eyebrow">
+          OPERACIONES
+        </span>
 
         <h2>Consola de operación</h2>
 
         <p>
-          Consulta una zona de servicio y encuentra el recorrido con menor
-          tiempo estimado.
+          Consulta una zona de servicio y encuentra
+          el recorrido con menor tiempo estimado.
         </p>
       </div>
 
@@ -50,13 +88,14 @@ const {
         <LoaderCircle
           :size="16"
           :class="{ spinning: networkLoading }"
-          aria-hidden="true"
         />
-
-        {{ networkLoading ? 'Actualizando…' : 'Actualizar red' }}
+        {{
+          networkLoading
+            ? 'Actualizando…'
+            : 'Actualizar red'
+        }}
       </button>
     </header>
-
 
     <p
       v-if="networkError"
@@ -74,14 +113,16 @@ const {
       </button>
     </p>
 
-
     <div class="operations-workspace">
+
       <section
         class="operations-query card"
         aria-label="Consulta de recorrido"
       >
         <div class="operations-query__heading">
-          <span class="eyebrow">Nueva consulta</span>
+          <span class="eyebrow">
+            NUEVA CONSULTA
+          </span>
 
           <h3>Planificar recorrido</h3>
         </div>
@@ -91,7 +132,9 @@ const {
           @submit.prevent="calculateRoute"
         >
           <div class="form-field">
-            <label for="operation-origin">Base de origen</label>
+            <label for="operation-origin">
+              Base de origen
+            </label>
 
             <select
               id="operation-origin"
@@ -120,7 +163,9 @@ const {
           </div>
 
           <div class="form-field">
-            <label for="operation-destination">Zona de destino</label>
+            <label for="operation-destination">
+              Zona de destino
+            </label>
 
             <select
               id="operation-destination"
@@ -157,10 +202,12 @@ const {
               v-if="queryLoading"
               :size="16"
               class="spinning"
-              aria-hidden="true"
             />
 
-            <Search v-else :size="16" aria-hidden="true" />
+            <Search
+              v-else
+              :size="16"
+            />
 
             {{
               queryLoading
@@ -171,7 +218,11 @@ const {
         </form>
 
         <p
-          v-if="!networkLoading && !networkError && (!bases.length || !zones.length)"
+          v-if="
+            !networkLoading &&
+            !networkError &&
+            (!bases.length || !zones.length)
+          "
           class="hint"
         >
           {{
@@ -180,20 +231,26 @@ const {
               : 'Agrega una zona de destino para calcular una ruta.'
           }}
 
-          <NuxtLink to="/network">Configurar red</NuxtLink>
+          <NuxtLink to="/network">
+            Configurar red
+          </NuxtLink>
         </p>
       </section>
-
 
       <section
         class="operations-result card"
         aria-label="Resultado de la consulta"
       >
         <div class="operations-result__heading">
-          <MapPin :size="18" aria-hidden="true" />
+          <MapPin
+            :size="18"
+            aria-hidden="true"
+          />
 
           <div>
-            <span class="eyebrow">Resultado rápido</span>
+            <span class="eyebrow">
+              RESULTADO RÁPIDO
+            </span>
 
             <h3>Tiempo y recorrido</h3>
           </div>
@@ -209,15 +266,82 @@ const {
           v-if="result?.reachable"
           class="operations-route"
         >
-          <h4 class="operations-route__title">Recorrido operacional</h4>
+          <h4 class="operations-route__title">
+            Recorrido operacional
+          </h4>
 
-          <OperationalRoute :segments="result.segments" />
+          <OperationalRoute
+            :segments="result.segments"
+          />
         </div>
       </section>
+
     </div>
+
+    <section
+      v-if="result"
+      class="operations-analysis"
+      aria-label="Análisis profundo"
+    >
+      <button
+        type="button"
+        class="operations-analysis__toggle"
+        :aria-expanded="analysisOpen"
+        aria-controls="operations-deep-content"
+        @click="analysisOpen = !analysisOpen"
+      >
+        <span class="operations-analysis__toggle-content">
+          <span class="operations-analysis__icon">
+            <GitBranch :size="20" />
+          </span>
+
+          <span>
+            <strong>Análisis profundo</strong>
+
+            <small>
+              Consulta el grafo, la exploración de
+              Dijkstra y la cobertura con BFS.
+            </small>
+          </span>
+        </span>
+
+        <ChevronUp
+          v-if="analysisOpen"
+          :size="20"
+        />
+
+        <ChevronDown
+          v-else
+          :size="20"
+        />
+      </button>
+
+      <div
+        v-if="analysisOpen"
+        id="operations-deep-content"
+        class="operations-analysis__content"
+      >
+        <DeepAnalysis
+          :network="network"
+          :result="result"
+          :bfs="bfs"
+          :bfs-minutes="bfsMinutes"
+          :comparison="comparison"
+          :comparison-loading="comparisonLoading"
+          :comparison-error="comparisonError"
+          :active-route="activeRoute"
+          :path-node-ids="pathNodeIds"
+          :visited-node-ids="visitedNodeIds"
+          :highlighted-segments="highlightedSegments"
+          :result-key="resultKey"
+          @compare="compareWithBfs"
+          @switch-route="switchRoute"
+        />
+      </div>
+    </section>
+
   </div>
 </template>
-
 
 <style scoped>
 .operations-workspace {
@@ -227,7 +351,8 @@ const {
   align-items: start;
 }
 
-.operations-query {
+.operations-query,
+.operations-result {
   min-width: 0;
 }
 
@@ -246,10 +371,6 @@ const {
 
 .operations-form__submit {
   width: 100%;
-}
-
-.operations-result {
-  min-width: 0;
 }
 
 .operations-result__heading {
@@ -280,6 +401,65 @@ const {
   color: var(--text-secondary);
 }
 
+.operations-analysis {
+  min-width: 0;
+  margin-top: 22px;
+}
+
+.operations-analysis__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+}
+
+.operations-analysis__toggle-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.operations-analysis__toggle-content > span:last-child {
+  display: grid;
+  gap: 6px;
+}
+
+.operations-analysis__toggle-content strong {
+  font-size: 0.95rem;
+}
+
+.operations-analysis__toggle-content small {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.operations-analysis__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+}
+
+.operations-analysis__content {
+  min-width: 0;
+  margin-top: 14px;
+}
+
 @media (max-width: 1000px) {
   .operations-workspace {
     grid-template-columns: 1fr;
@@ -297,6 +477,10 @@ const {
 @media (max-width: 600px) {
   .operations-form {
     grid-template-columns: 1fr;
+  }
+
+  .operations-analysis__toggle {
+    padding: 14px;
   }
 }
 </style>
