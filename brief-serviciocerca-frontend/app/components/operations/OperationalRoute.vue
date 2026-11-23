@@ -57,7 +57,10 @@ const destinationNode = computed(() => {
           </span>
         </div>
 
-        <div class="operational-route__stop">
+        <div
+          v-if="index < segments.length - 1"
+          class="operational-route__stop"
+        >
           <strong class="operational-route__name">
             {{ segment.destination.name }}
           </strong>
