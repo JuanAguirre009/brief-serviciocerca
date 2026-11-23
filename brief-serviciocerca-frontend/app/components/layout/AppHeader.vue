@@ -1,27 +1,49 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue'
 import { Layers } from 'lucide-vue-next'
+
 const route = useRoute()
-const title = computed(() =>
-  route.path.startsWith('/coverage')
-    ? 'Consulta de cobertura'
-    : route.path.startsWith('/routes')
-      ? 'Rutas óptimas'
-      : route.path.startsWith('/network')
-        ? 'Configuración de red'
-        : 'Centro de operaciones',
-)
+
+const title = computed(() => {
+  const path = route.path
+
+  if (path.startsWith('/operations')) {
+    return 'Consola de operación'
+  }
+
+  if (path.startsWith('/coverage')) {
+    return 'Consulta de cobertura'
+  }
+
+  if (path.startsWith('/routes')) {
+    return 'Rutas óptimas'
+  }
+
+  if (path.startsWith('/network')) {
+    return 'Configuración de red'
+  }
+
+  return 'Resumen operacional'
+})
 </script>
+
 <template>
   <header class="topbar">
     <div class="breadcrumb">
-      <span>Operación</span><span aria-hidden="true">/</span>
+      <span>Operación</span>
+
+      <span aria-hidden="true">/</span>
+
       <h1>{{ title }}</h1>
     </div>
-    <span class="workspace-label"
-      ><Layers :size="15" aria-hidden="true" /> ServicioCerca</span
-    >
+
+    <span class="workspace-label">
+      <Layers :size="15" aria-hidden="true" />
+      ServicioCerca
+    </span>
   </header>
 </template>
+
 <style scoped>
 .topbar {
   display: flex;
@@ -33,21 +55,26 @@ const title = computed(() =>
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border);
 }
+
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
+
 .breadcrumb > span {
   color: var(--text-muted);
   font-size: 0.83rem;
 }
+
 h1 {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
+
 .workspace-label {
   display: flex;
   align-items: center;
@@ -55,15 +82,18 @@ h1 {
   color: var(--text-secondary);
   font-size: 0.8rem;
 }
+
 @media (max-width: 760px) {
   .topbar {
     padding: 12px 16px;
     min-height: 52px;
   }
+
   .workspace-label {
     display: none;
   }
 }
+
 @media (max-width: 420px) {
   .breadcrumb > span {
     display: none;
